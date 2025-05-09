@@ -2,15 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import Highcharts from "highcharts";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import ResponsiveHighChart from "../_context/components/ResponsiveHighChart";
+import ResponsiveEChart from "../_context/components/ResponsiveEChart";
 
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const ResponsiveGridLayout = WidthProvider(Responsive);
   
-const LOCAL_STORAGE_KEY = "dashboard_layouts";
-
 const lg = [
     { i: "statcard1", x: 0, y: 0, w: 3, h: 4 },
     { i: "statcard2", x: 3, y: 0, w: 3, h: 4 },
@@ -53,14 +50,13 @@ const sm = [
     { i: "stepCompletion", x: 0, y: 86, w: 1, h: 10 }
 ];
 
+const LOCAL_STORAGE_KEY = "dashboard_layouts";
 const defaultLayouts = { lg, md, sm };
 
 const Dashboard = () => {
 
     const [layouts, setLayouts] = useState(defaultLayouts);
     const [isEditMode, setIsEditMode] = useState(false);
-
-    const ResponsiveGridLayout = React.useMemo(() => WidthProvider(Responsive), []);
 
     useEffect(() => {
         try {
@@ -76,7 +72,7 @@ const Dashboard = () => {
     const saveLayouts = () => {
         try {
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(layouts));
-            setIsEditMode(false); 
+            setIsEditMode(false);
             alert("Dashboard layout opgeslagen!");
         } catch (error) {
             console.error("Error saving layouts to localStorage:", error);
@@ -101,618 +97,336 @@ const Dashboard = () => {
         alert("Dashboard layout is hersteld naar de standaard instellingen.");
     };
 
-    const lineChartOptions = {
-        chart: {
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 12,
-            style: {
-                fontFamily: 'var(--font-geist-sans), sans-serif'
-            }
-        },
+    const lineChartOption = {
         title: { 
-            text: "Trends Overview",
-            style: {
-                fontWeight: '600',
-                fontSize: '16px',
-                color: '#334155'
-            }
+            text: "Sample Chart" 
         },
-        colors: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'],
+        tooltip: {
+            trigger: 'axis'
+        },
         xAxis: {
-            lineColor: '#e2e8f0',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
+            type: 'category',
+            data: ['A', 'B', 'C', 'D']
         },
         yAxis: {
-            gridLineColor: '#f1f5f9',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        series: [{
-            type: "line" as const,
-            name: "Performance",
-            data: [1, 3, 2, 4, 5, 3, 6],
-            lineWidth: 3,
-            marker: {
-                radius: 4
-            }
-        }]
-    };
-
-    const pieChartOptions = {
-        chart: { 
-            type: "pie" as const,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 12,
-            style: {
-                fontFamily: 'var(--font-geist-sans), sans-serif'
-            }
-        },
-        title: { 
-            text: "Completion Status",
-            style: {
-                fontWeight: '600',
-                fontSize: '16px',
-                color: '#334155'
-            }
-        },
-        colors: ['#3b82f6', '#e2e8f0', '#f59e0b'],
-        plotOptions: {
-            pie: {
-                borderWidth: 0,
-                borderRadius: 4,
-                innerSize: '50%',
-                dataLabels: {
-                    distance: 20,
-                    style: {
-                        fontWeight: '500',
-                        color: '#475569',
-                        textOutline: 'none'
-                    }
-                }
-            }
-        },
-        series: [{
-            type: "pie" as const,
-            name: "Completed",
-            data: [
-              { name: "Done", y: 60 },
-              { name: "Remaining", y: 30 },
-              { name: "Deals", y: 10 }
-            ]
-        }]
-    };
-
-    const revisitBarOptions = {
-        chart: { 
-            type: "column" as const,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 12,
-            style: {
-                fontFamily: 'var(--font-geist-sans), sans-serif'
-            }
-        }, 
-        title: { 
-            text: "Customer Revisits",
-            style: {
-                fontWeight: '600',
-                fontSize: '16px',
-                color: '#334155'
-            }
-        },
-        colors: ['#3b82f6', '#94a3b8'],
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            lineColor: '#e2e8f0',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        yAxis: {
-            title: {
-                text: 'Revisits'
-            },
-            gridLineColor: '#f1f5f9',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        plotOptions: {
-            column: {
-                borderRadius: 4,
-                borderWidth: 0
-            }
+            type: 'value'
         },
         series: [
             {
-                type: "column" as const,
-                name: "Gewonnen",
+                data: [1, 3, 2, 4],
+                type: "line"
+            }
+        ]
+    };
+
+    const pieChartOption = {
+        title: { 
+            text: "Completion" 
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        series: [
+            {
+                type: 'pie',
+                name: 'Completed',
+                radius: '70%',
+                center: ['50%', '50%'],
+                data: [
+                    { name: "Done", value: 60 },
+                    { name: "Remaining", value: 30 },
+                    { name: "Deals", value: 10 }
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    const revisitBarOption = {
+        title: { 
+            text: "Customer Revisits" 
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['Gewonnen', 'Open']
+        },
+        xAxis: {
+            type: 'category',
+            data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Revisits'
+        },
+        series: [
+            {
+                type: 'bar',
+                name: 'Gewonnen',
                 data: [49, 71, 106, 129, 144, 176]
             },
             {
-                type: "column" as const,
-                name: "Open",
+                type: 'bar',
+                name: 'Open',
                 data: [83, 78, 98, 93, 106, 84]
             }
-        ] 
+        ]
     };
 
-    const formCloseOptions = {
-        chart: { 
-            type: "area" as const,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 12,
-            style: {
-                fontFamily: 'var(--font-geist-sans), sans-serif'
-            }
-        },
+    const formCloseOption = {
         title: { 
-            text: "Gewonnen deals",
-            style: {
-                fontWeight: '600',
-                fontSize: '16px',
-                color: '#334155'
-            }
-        },
-        colors: ['#10b981'],
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            lineColor: '#e2e8f0',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        yAxis: {
-            title: {
-                text: 'Percentage'
-            },
-            gridLineColor: '#f1f5f9',
-            labels: {
-                format: '{value}%',
-                style: {
-                    color: '#64748b'
-                }
-            }
+            text: "Gewonnen deals" 
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.y}%</b>'
+            trigger: 'axis',
+            formatter: '{b}: {c}%'
         },
-        plotOptions: {
-            area: {
-                fillOpacity: 0.3,
-                marker: {
-                    enabled: false,
-                    symbol: 'circle',
-                    radius: 2,
-                    states: {
-                        hover: {
-                            enabled: true
-                        }
-                    }
-                }
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Percentage',
+            axisLabel: {
+                formatter: '{value}%'
             }
         },
         series: [
             {
-                type: "area" as const,
-                name: "Gewonnen deals", 
-                data: [63, 67, 72, 78, 82, 85]
+                type: 'line',
+                name: 'Gewonnen deals',
+                data: [63, 67, 72, 78, 82, 85],
+                areaStyle: {},
+                smooth: true
             }
         ]
     };
 
-    const regionOptions = {
-        chart: { 
-            type: "column" as const,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 12,
-            style: {
-                fontFamily: 'var(--font-geist-sans), sans-serif'
-            }
-        },
+    const regionOption = {
         title: { 
-            text: "Regional Performance",
-            style: {
-                fontWeight: '600',
-                fontSize: '16px',
-                color: '#334155'
-            }
-        },
-        colors: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'],
-        xAxis: {
-            categories: ['North', 'East', 'South', 'West', 'Central'],
-            lineColor: '#e2e8f0',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        yAxis: {
-            title: {
-                text: 'Sales (€)'
-            },
-            gridLineColor: '#f1f5f9',
-            labels: {
-                format: '€{value:,.0f}',
-                style: {
-                    color: '#64748b'
-                }
-            }
+            text: "Regional Performance" 
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>€{point.y:,.0f}</b>'
+            trigger: 'axis',
+            formatter: '{b}: €{c}'
         },
-        plotOptions: {
-            column: {
-                borderRadius: 4,
-                borderWidth: 0
+        xAxis: {
+            type: 'category',
+            data: ['North', 'East', 'South', 'West', 'Central']
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Sales (€)',
+            axisLabel: {
+                formatter: '€{value}'
             }
         },
         series: [
             {
-                type: "column" as const,
-                name: "Sales",
+                type: 'bar',
+                name: 'Sales',
                 data: [120000, 95000, 75000, 110000, 145000],
-                colorByPoint: true
-            }
-        ]
-    };
-
-    const activityOptions = {
-        chart: { 
-            type: "line" as const,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 12,
-            style: {
-                fontFamily: 'var(--font-geist-sans), sans-serif'
-            }
-        },
-        title: { 
-            text: "Daily User Activity",
-            style: {
-                fontWeight: '600',
-                fontSize: '16px',
-                color: '#334155'
-            }
-        },
-        colors: ['#8b5cf6'],
-        xAxis: {
-            categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            lineColor: '#e2e8f0',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        yAxis: {
-            title: {
-                text: 'Active Users'
-            },
-            min: 0,
-            gridLineColor: '#f1f5f9',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.y} users</b>'
-        },
-        plotOptions: {
-            line: {
-                marker: {
-                    enabled: true,
-                    radius: 5,
-                    symbol: 'circle'
-                },
-                lineWidth: 3
-            }
-        },
-        series: [
-            {
-                type: "line" as const,
-                name: "Active Users",
-                data: [143, 176, 202, 148, 187, 236, 225]
-            }
-        ]
-    };
-
-    const stepCompletionOptions = {
-        chart: { 
-            type: "bar" as const,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 12,
-            style: {
-                fontFamily: 'var(--font-geist-sans), sans-serif'
-            }
-        },
-        title: { 
-            text: "Workflow Progress",
-            style: {
-                fontWeight: '600',
-                fontSize: '16px',
-                color: '#334155'
-            }
-        },
-        colors: ['#3b82f6'],
-        xAxis: {
-            categories: ['Planning', 'Design', 'Development', 'Testing', 'Deployment'],
-            lineColor: '#e2e8f0',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        yAxis: {
-            min: 0,
-            max: 100,
-            title: {
-                text: 'Completion %'
-            },
-            gridLineColor: '#f1f5f9',
-            labels: {
-                style: {
-                    color: '#64748b'
-                }
-            }
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.y}%</b>'
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 4,
-                dataLabels: {
-                    enabled: true,
-                    format: '{y}%',
-                    style: {
-                        fontWeight: '500',
-                        color: '#475569',
-                        textOutline: 'none'
+                itemStyle: {
+                    color: function(params: { dataIndex: number }) {
+                        const colorList = ['#c23531','#2f4554','#61a0a8','#d48265','#91c7ae'];
+                        return colorList[params.dataIndex];
                     }
                 }
             }
+        ]
+    };
+
+    const activityOption = {
+        title: { 
+            text: "Daily User Activity" 
         },
-        legend: {
-            enabled: false
+        tooltip: {
+            trigger: 'axis',
+            formatter: '{b}: {c} users'
+        },
+        xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Active Users',
+            min: 0
         },
         series: [
             {
-                type: "bar" as const,
-                name: "Progress",
-                data: [90, 80, 85, 40, 30]
+                type: 'line',
+                name: 'Active Users',
+                data: [143, 176, 202, 148, 187, 236, 225],
+                symbol: 'circle',
+                symbolSize: 6,
+                itemStyle: {
+                    color: '#5470c6'
+                },
+                lineStyle: {
+                    width: 3
+                }
+            }
+        ]
+    };
+
+    const stepCompletionOption = {
+        title: { 
+            text: "Workflow Steps" 
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: '{b}: {c}%'
+        },
+        xAxis: {
+            type: 'value',
+            name: 'Completion %',
+            max: 100,
+            axisLabel: {
+                formatter: '{value}%'
+            }
+        },
+        yAxis: {
+            type: 'category',
+            data: ['Planning', 'Design', 'Development', 'Testing', 'Deployment'].reverse()
+        },
+        series: [
+            {
+                type: 'bar',
+                name: 'Progress',
+                data: [90, 80, 85, 40, 30].reverse(),
+                label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{c}%'
+                }
             }
         ]
     };
 
     return (
-      <div className="p-6 bg-slate-50 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
-          <div className="flex space-x-3">
-            {isEditMode ? (
-              <>
-                <button 
-                  onClick={saveLayouts} 
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg shadow hover:bg-emerald-700 transition-colors flex items-center space-x-1"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>Opslaan</span>
-                </button>
-                <button 
-                  onClick={toggleEditMode} 
-                  className="px-4 py-2 bg-slate-600 text-white rounded-lg shadow hover:bg-slate-700 transition-colors flex items-center space-x-1"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                  <span>Annuleren</span>
-                </button>
-                <button 
-                  onClick={resetToDefault} 
-                  className="px-4 py-2 bg-rose-600 text-white rounded-lg shadow hover:bg-rose-700 transition-colors flex items-center space-x-1"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                  </svg>
-                  <span>Reset</span>
-                </button>
-              </>
-            ) : (
-              <button 
-                onClick={toggleEditMode} 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors flex items-center space-x-1"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-                <span>Bewerken</span>
-              </button>
-            )}
-          </div>
+        <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">Dashboard</h1>
+                <div className="flex space-x-2">
+                    {isEditMode ? (
+                        <>
+                            <button 
+                                onClick={saveLayouts} 
+                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                            >
+                                Opslaan
+                            </button>
+                            <button 
+                                onClick={toggleEditMode} 
+                                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                            >
+                                Annuleren
+                            </button>
+                            <button 
+                                onClick={resetToDefault} 
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                            >
+                                Reset
+                            </button>
+                        </>
+                    ) : (
+                        <button 
+                            onClick={toggleEditMode} 
+                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        >
+                            Bewerken
+                        </button>
+                    )}
+                </div>
+            </div>
+            <ResponsiveGridLayout
+                className="layout"
+                layouts={layouts}
+                breakpoints={{ lg: 1200, md: 996, sm: 768 }}
+                cols={{ lg: 12, md: 10, sm: 1 }}
+                rowHeight={30}
+                onLayoutChange={onLayoutChange}
+                isDraggable={isEditMode}
+                isResizable={isEditMode}
+            >
+                <div key="statcard1" className="bg-white p-2 border">
+                    <div className="text-sm text-gray-600">Leads</div>
+                    <div className="text-xl font-bold">131</div>
+                </div>
+                <div key="statcard2" className="bg-white p-2 border">
+                    <div className="text-sm text-gray-600">Deals</div>
+                    <div className="text-xl font-bold">27</div>
+                </div>
+                <div key="statcard3" className="bg-white p-2 border">
+                    <div className="text-sm text-gray-600">Revenue</div>
+                    <div className="text-xl font-bold">€43,200</div>
+                </div>
+                <div key="statcard4" className="bg-white p-2 border">
+                    <div className="text-sm text-gray-600">Conversion</div>
+                    <div className="text-xl font-bold">17%</div>
+                </div>
+
+                <div key="eventTrends" className="bg-white p-2 border h-full w-full">
+                    <ResponsiveEChart option={lineChartOption} />
+                </div>
+
+                <div key="completionPie" className="bg-white p-2 border h-full w-full">
+                    <ResponsiveEChart option={pieChartOption} />
+                </div>
+
+                <div key="revisitBar" className="bg-white p-2 border h-full w-full">
+                    <ResponsiveEChart option={revisitBarOption} />
+                </div>
+
+                <div key="formClose" className="bg-white p-2 border h-full w-full">
+                    <ResponsiveEChart option={formCloseOption} />
+                </div>
+
+                <div key="map" className="bg-white p-2 border h-full w-full">
+                    <ResponsiveEChart option={regionOption} />
+                </div>
+
+                <div key="activity" className="bg-white p-2 border h-full w-full">
+                    <ResponsiveEChart option={activityOption} />
+                </div>      
+
+                <div key="stepCompletion" className="bg-white p-2 border h-full w-full">
+                    <ResponsiveEChart option={stepCompletionOption} />
+                </div>
+            </ResponsiveGridLayout>
+
+            <style jsx>{`
+                .react-grid-placeholder {
+                    background: rgba(52, 152, 219, 0.2) !important;
+                }
+                
+                .react-grid-item {
+                    transition: all 200ms ease;
+                    transition-property: left, top;
+                }
+                
+                .react-grid-item.react-grid-placeholder {
+                    background: rgba(52, 152, 219, 0.2) !important;
+                    border: 2px dashed #3498db;
+                    opacity: 0.7;
+                }
+                
+                .react-resizable-handle {
+                    visibility: ${isEditMode ? 'visible' : 'hidden'};
+                }
+            `}</style>
         </div>
-        
-        <ResponsiveReactGridLayout
-          className="layout"
-          layouts={layouts}
-          breakpoints={{ lg: 1200, md: 996, sm: 768 }}
-          cols={{ lg: 12, md: 10, sm: 1 }}
-          rowHeight={30}
-          onLayoutChange={onLayoutChange}
-          isDraggable={isEditMode}
-          isResizable={isEditMode}
-          margin={[16, 16]}
-        >
-          <div key="statcard1" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-slate-500">Leads</div>
-                <div className="text-2xl font-bold text-slate-800 mt-1">131</div>
-                <div className="text-xs text-emerald-600 font-medium mt-1 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
-                  </svg>
-                  +12% vs vorige week
-                </div>
-              </div>
-              <div className="bg-blue-100 p-3 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div key="statcard2" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-slate-500">Deals</div>
-                <div className="text-2xl font-bold text-slate-800 mt-1">27</div>
-                <div className="text-xs text-emerald-600 font-medium mt-1 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
-                  </svg>
-                  +5% vs vorige maand
-                </div>
-              </div>
-              <div className="bg-emerald-100 p-3 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div key="statcard3" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-slate-500">Revenue</div>
-                <div className="text-2xl font-bold text-slate-800 mt-1">€43,200</div>
-                <div className="text-xs text-emerald-600 font-medium mt-1 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
-                  </svg>
-                  +15% vs Q1
-                </div>
-              </div>
-              <div className="bg-amber-100 p-3 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div key="statcard4" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-slate-500">Conversion</div>
-                <div className="text-2xl font-bold text-slate-800 mt-1">17%</div>
-                <div className="text-xs text-rose-600 font-medium mt-1 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16 17a1 1 0 01-1-1v-2.586l-4.293 4.293a1 1 0 01-1.414 0L8 16.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 16.586 14.586 13H12a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clipRule="evenodd" />
-                  </svg>
-                  -2% vs target
-                </div>
-              </div>
-              <div className="bg-purple-100 p-3 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div key="eventTrends" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <ResponsiveHighChart options={lineChartOptions} />
-          </div>
-
-          <div key="completionPie" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <ResponsiveHighChart options={pieChartOptions} />
-          </div>
-
-          <div key="revisitBar" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <ResponsiveHighChart options={revisitBarOptions} />
-          </div>
-
-          <div key="formClose" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <ResponsiveHighChart options={formCloseOptions} />
-          </div>
-
-          <div key="map" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <ResponsiveHighChart options={regionOptions} />
-          </div>
-
-          <div key="activity" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <ResponsiveHighChart options={activityOptions} />
-          </div>      
-
-          <div key="stepCompletion" className="bg-white rounded-xl shadow-sm p-4 border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <ResponsiveHighChart options={stepCompletionOptions} />
-          </div>
-        </ResponsiveReactGridLayout>
-
-        <style jsx>{`
-          .react-grid-placeholder {
-            background: rgba(59, 130, 246, 0.1) !important;
-            border: 2px dashed #3b82f6;
-            border-radius: 0.75rem;
-          }
-
-          .react-grid-item {
-            transition: all 200ms ease;
-            transition-property: left, top;
-          }
-          
-          .react-grid-item.react-draggable-dragging {
-            transition: none;
-            z-index: 100;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-          }
-          
-          .react-grid-item.react-grid-placeholder {
-            background: rgba(59, 130, 246, 0.1) !important;
-            border: 2px dashed #3b82f6;
-            opacity: 0.7;
-            border-radius: 0.75rem;
-          }
-          
-          .react-resizable-handle {
-            visibility: ${isEditMode ? 'visible' : 'hidden'};
-            opacity: ${isEditMode ? '1' : '0'};
-            transition: opacity 0.2s ease-in-out;
-            right: 5px !important;
-            bottom: 5px !important;
-            width: 12px !important;
-            height: 12px !important;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>');
-            background-position: bottom right;
-            padding: 0 3px 3px 0;
-            background-repeat: no-repeat;
-            background-origin: content-box;
-            box-sizing: border-box;
-            cursor: se-resize;
-          }
-        `}</style>
-      </div>
     );
 };
 

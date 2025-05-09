@@ -1,5 +1,5 @@
 {
-  "name": "noah-dashboard",
+  "name": "dashboard-poc",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "echarts": "^5.6.0",
+    "echarts-for-react": "^3.0.2",
     "highcharts": "^12.2.0",
     "highcharts-react-official": "^3.2.2",
     "next": "15.3.1",
